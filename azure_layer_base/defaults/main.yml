@@ -1,0 +1,4 @@
+---
+# defaults file for azure_layer_base
+venv_cli_path: "{{ansible_env.HOME}}/.venv/cli"
+venv_ansible_path: "{{ansible_env.HOME}}/.venv/ansible"

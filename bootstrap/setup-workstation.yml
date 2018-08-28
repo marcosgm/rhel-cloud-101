@@ -55,7 +55,9 @@
     - name: Modify this Ansible inventory to use Python from the ansible venv {{venv_ansible_path}}
       copy:
         dest: ../inventory
-        content: "[all]\nlocalhost ansible_connection=local ansible_python_interpreter={{venv_ansible_path}}/bin/python\n"
+        content: "[all]\
+localhost ansible_connection=local ansible_python_interpreter={{venv_ansible_path}}/bin/python\
+localhost-cli ansible_connection=local ansible_python_interpreter={{venv_ansible_path}}/bin/python\n"
 
     - name: Show instructions to configure Azure CLI
       debug:

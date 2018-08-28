@@ -1,0 +1,30 @@
+---
+- name: Check local workstation can run ansible cloud commands (AWS and Azure)
+  hosts: localhost
+  vars:
+    venv_cli_path: "{{ansible_env.HOME}}/.venv/cli"
+    venv_ansible_path: "{{ansible_env.HOME}}/.venv/ansible"
+    ansible_cloud_account_name: ansible
+  tags: azure
+  tasks:
+
+    - name: Test credentials- List all resources groups
+      azure_rm_resourcegroup_facts:
+        tags:
+        - Testing
+    
+    - name: Test credentials - Create a resource group
+      azure_rm_resourcegroup:
+        name: Testing
+        location: westus
+        
+    - name: Test credentials- List all resources groups
+      azure_rm_resourcegroup_facts:
+        tags:
+        - Testing
+
+    - name: Test credentials - Delete a resource group
+      azure_rm_resourcegroup:
+        name: Testing
+        location: westus
+        state: absent
