@@ -1,0 +1,80 @@
+---
+- name: Configure local workstation to be able to run ansible cloud commands (AWS and Azure)
+  hosts: localhost
+  vars:
+    venv_cli_path: "{{ansible_env.HOME}}/.venv/cli"
+    venv_ansible_path: "{{ansible_env.HOME}}/.venv/ansible"
+  pre_tasks:
+    - name: install Python Virtualenv to hold PIP dependencies
+      become: true
+      pip:
+        name: 
+          - virtualenv
+          - virtualenvwrapper
+        state: latest
+      
+    - name: install AWS CLI via pip
+      become: false #never do pip install as root / sudo !!!
+      pip:
+        name: 
+          - awscli
+        state: latest
+        virtualenv_site_packages: false
+        virtualenv: "{{venv_cli_path}}"
+      tags: aws
+
+    - name: install Azure CLI via pip
+      become: false #never do pip install as root / sudo !!!
+      pip:
+        name:
+          - azure-cli
+        state: latest
+        virtualenv_site_packages: false
+        virtualenv: "{{venv_cli_path}}"
+      tags: azure
+
+    - name: install Azure Ansible dependencies via pip
+      become: false #never do pip install as root / sudo !!!
+      pip:
+        name:
+          - ansible[azure]
+        state: latest
+        virtualenv_site_packages: false
+        virtualenv: "{{venv_ansible_path}}"
+      tags: azure
+  
+  tasks:
+    - name: test AWS CLI binary using the CLI venv {{venv_cli_path}}
+      shell: "source {{venv_cli_path}}/bin/activate && aws --version"
+      tags: aws
+
+    - name: test AZ CLI binary  using the CLI venv {{venv_cli_path}}
+      shell:  "source {{venv_cli_path}}/bin/activate && az account list"
+      tags: azure
+
+    - name: Modify this Ansible inventory to use Python from the ansible venv {{venv_ansible_path}}
+      copy:
+        dest: ../inventory
+        content: "[all]\nlocalhost ansible_connection=local ansible_python_interpreter={{venv_ansible_path}}/bin/python\n"
+
+    - name: Show instructions to configure Azure CLI
+      debug:
+        msg: 
+          - Now enter the venv with
+          - '# source {{venv_cli_path}}/bin/activate'
+          - and execute 
+          - '# az login' 
+          - then visit https://docs.ansible.com/ansible/2.6/scenario_guides/guide_azure.html#using-service-principal
+          - in particular, https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#required-permissions
+      tags: azure
+  
+    - name: Show instructions to configure AWS CLI
+      debug:
+        msg: 
+          - Now enter the venv with
+          - '# source {{venv_cli_path}}/bin/activate'
+          - and execute 
+          - '# aws login' 
+          - then visit https://docs.ansible.com/ansible/2.6/scenario_guides/guide_aws.html#authentication 
+      tags: azure
+    
