@@ -1,5 +1,7 @@
 # Overview
 
+[![Git](https://app.soluble.cloud/api/v1/public/badges/6ac7fce7-4acb-43a0-ab26-84adecb0afd4.svg?orgId=568518005652)](https://app.soluble.cloud/repos/details/github.com/marcosgm/rhel-cloud-101?orgId=568518005652)  
+
 GOAL: help with the first steps for a Red Hat customer on public clouds 
 
 This repository contains everythign you need to start (from scratch) managing RHEL on the cloud.
